@@ -3,36 +3,41 @@ from haystack.components.builders.prompt_builder import PromptBuilder
 from haystack.components.generators import OpenAIGenerator
 from haystack import Pipeline
 
-fetcher = HackerNewsFetcher()
 
-prompt_template = """  
-You will be provided a few of the top posts in HackerNews, followed by their URL.  
-For each post, provide a brief summary followed by the URL the full post can be found at.  
-  
-Posts:  
-{% for article in articles %}  
-  {{ article.content }}
-  URL: {{ article.meta["url"] }}
-{% endfor %}  
-"""
+def get_top_news():
+    fetcher = HackerNewsFetcher()
 
-prompt_builder = PromptBuilder(template=prompt_template)
-llm = OpenAIGenerator()
+    prompt_template = """  
+    You will be provided a few of the top posts in HackerNews, followed by their URL.  
+    For each post, provide a brief summary followed by the URL the full post can be found at.  
+    
+    Posts:  
+    {% for article in articles %}  
+    {{ article.content }}
+    URL: {{ article.meta["url"] }}
+    {% endfor %}  
+    """
 
-pipeline = Pipeline()
+    prompt_builder = PromptBuilder(template=prompt_template)
+    llm = OpenAIGenerator()
 
-pipeline.add_component("fetcher", fetcher)
-pipeline.add_component("prompt_builder", prompt_builder)
-pipeline.add_component("llm", llm)
+    pipeline = Pipeline()
 
-pipeline.connect("fetcher.articles", "prompt_builder.articles")
-pipeline.connect("prompt_builder", "llm")
+    pipeline.add_component("fetcher", fetcher)
+    pipeline.add_component("prompt_builder", prompt_builder)
+    pipeline.add_component("llm", llm)
 
-pipeline.draw("./pipeline.png")
+    pipeline.connect("fetcher.articles", "prompt_builder.articles")
+    pipeline.connect("prompt_builder", "llm")
 
-result = pipeline.run({"fetcher": {"num_articles": 5}})
+    pipeline.draw("./pipeline.png")
 
-print(result)
+    result = pipeline.run({"fetcher": {"num_articles": 5}})
+
+    print("RESULT")
+    print(result)
+
+    return result["llm"]["replies"]
 
 # Hacker News Fetcher
     # Fetcher
