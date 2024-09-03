@@ -1,2 +1,6 @@
 venv
 __pycache__
+
+myhackernews/.serverless
+myhackernews/node_modules
+myhackernews/venv
