@@ -14,6 +14,16 @@
 <script>
 export default {
   name: "HelloWorld",
+  created() {
+    this.$axios
+      .get("/")
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  },
   props: {
     msg: String,
   },
