@@ -22,6 +22,8 @@ functions:
           path: /{proxy+}
           method: ANY
 
+# TODO - setup postgres rds instance
+
 plugins:
   - serverless-wsgi
   - serverless-python-requirements
