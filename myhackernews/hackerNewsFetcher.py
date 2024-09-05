@@ -20,7 +20,7 @@ class HackerNewsFetcher:
         fetching_pipeline.connect("fetcher.streams", "converter.sources")
         self.fetching_pipeline = fetching_pipeline
 
-    def get_top_post_ids(self, num_posts: int = 5):
+    def get_top_post_ids(self, num_posts: int = 7):
         url = f"https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
         response = requests.get(url)
         article_ids = response.json()

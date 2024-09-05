@@ -16,7 +16,7 @@ export default {
   name: "HelloWorld",
   created() {
     this.$axios
-      .get("/")
+      .get("/get_top_news")
       .then((response) => {
         console.log(response.data);
       })
