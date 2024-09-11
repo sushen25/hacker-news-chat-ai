@@ -5,11 +5,13 @@ service: myhackernews
 
 custom:
   wsgi:
-    app: app.app
+    app: run.app
 
 provider:
   name: aws
   runtime: python3.12
+  region: ap-southeast-1
+  memorySize: 256
 
 functions:
   api:
@@ -21,6 +23,12 @@ functions:
       - http:
           path: /{proxy+}
           method: ANY
+
+package:
+  exclude:
+    - .venv/**
+    - node_modules/**
+    - __pycache__/**
 
 # TODO - setup postgres rds instance
 
