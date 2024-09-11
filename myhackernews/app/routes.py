@@ -13,6 +13,15 @@ def get_news():
     top_news = get_top_news()
     return top_news
 
+@main.route("/get_posts")
+def get_posts():
+    posts = get_all_posts()
+    return jsonify([{"id": post.id, "title": post.title, "summary": post.summary, "url": post.url} for post in posts])
+
+@main.route("/create_post")
+def create_post_temp():
+    new_post = create_post(1, "My Post", "This  is my first post", "https://www.example.com")
+    return jsonify({"id": new_post.id, "title": new_post.title, "summary": new_post.summary, "url": new_post.url})
 
 @main.errorhandler(404)
 def resource_not_found(e):
