@@ -5,4 +5,3 @@ dev-up:
 .PHONY: vue-up
 vue-up:
 	cd frontend && npm run serve
-
