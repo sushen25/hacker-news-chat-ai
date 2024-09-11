@@ -97,9 +97,6 @@ def get_top_news():
 
     result = pipeline.run({"fetcher": {"num_articles": 5}, "prompt_builder": {"schema": Posts.schema_json()}})
 
-    print("RESULT:")
-    print(result)
-
     return json.loads(result["output_validator"]["valid_replies"][0])
 
 if __name__ == "__main__":

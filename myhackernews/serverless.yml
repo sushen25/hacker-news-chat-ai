@@ -5,7 +5,7 @@ service: myhackernews
 
 custom:
   wsgi:
-    app: app.app
+    app: run.app
 
 provider:
   name: aws
@@ -29,6 +29,7 @@ package:
     - .venv/**
     - node_modules/**
     - __pycache__/**
+
 # TODO - setup postgres rds instance
 
 plugins:
