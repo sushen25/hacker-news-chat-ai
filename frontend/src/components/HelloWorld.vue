@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script>
+<script >
 export default {
   name: "HelloWorld",
   created() {
