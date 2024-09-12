@@ -3,6 +3,7 @@ import requests
 from haystack import Pipeline, Document, component
 from haystack.components.fetchers import LinkContentFetcher
 from haystack.components.converters import HTMLToDocument
+from app.crud import does_post_exist
 
 from typing import List
 
@@ -24,7 +25,15 @@ class HackerNewsFetcher:
         url = f"https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
         response = requests.get(url)
         article_ids = response.json()
-        return article_ids[:num_posts]
+
+        ids = []
+        i = 0
+        while i < len(article_ids) and len(ids) < num_posts:
+            if not does_post_exist(article_ids[i]):
+                ids.append(article_ids[i])
+            i += 1 
+
+        return ids
     
     def fetch_post(self, post_id: int):
         url = f"https://hacker-news.firebaseio.com/v0/item/{post_id}.json?print=pretty"
@@ -32,9 +41,10 @@ class HackerNewsFetcher:
         article = response.json()
         return article
 
-    @component.output_types(articles=List[Document])
+    @component.output_types(articles=List[Document], ids = List[int])
     def run(self, num_articles: int):
         articles = []
+        ids = []
         top_post_ids = self.get_top_post_ids(num_articles)
 
         for id in top_post_ids:
@@ -43,12 +53,14 @@ class HackerNewsFetcher:
                 try:
                     article = self.fetching_pipeline.run({"fetcher": {"urls": [post["url"]]}})
                     articles.append(article["converter"]["documents"][0])
+                    ids.append(id)
                 except:
                     print(f"Error fetching article {post['url']}")
             elif "text" in post:
                 try:
                     articles.append(Document(content=post["text"]))
+                    ids.append(id)
                 except:
                     print(f"Error fetching article {post['text']}")
         
-        return { "articles": articles}
+        return { "articles": articles, "ids": ids }

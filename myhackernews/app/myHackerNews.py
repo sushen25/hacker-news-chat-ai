@@ -1,6 +1,7 @@
 import json
 
-from hackerNewsFetcher import HackerNewsFetcher
+from app.hackerNewsFetcher import HackerNewsFetcher
+from app.crud import create_post
 from haystack.components.builders.prompt_builder import PromptBuilder
 from haystack.components.generators import OpenAIGenerator
 from haystack import Pipeline, component
@@ -10,6 +11,7 @@ from pydantic import BaseModel, ValidationError
 
 
 class Post(BaseModel):
+    id: int
     title: str
     summary: str
     url: str
@@ -50,6 +52,20 @@ class OutputValidator:
                 f"Error from OutputValidator: {e}"
             )
             return {"invalid_replies": replies, "error_message": str(e)}
+        
+@component
+class PostStorer:
+
+    @component.output_types(posts=List[object])
+    def run(self, valid_replies: List[object]):
+        post_objs = json.loads(valid_replies[0])["posts"]
+        posts = []
+
+        for post_obj in post_objs:
+            post = create_post(post_obj["id"], post_obj["title"], post_obj["summary"], post_obj["url"])
+            posts.append(post_obj)
+
+        return {"posts": posts }
 
 
 def get_top_news():
@@ -63,6 +79,8 @@ def get_top_news():
 
     Posts:  
     {% for article in articles %}  
+    ID: {{ ids[loop.index0] }}
+    CONTENT:
     {{ article.content }}
     URL: {{ article.meta["url"] }}
     {% endfor %}
@@ -77,6 +95,7 @@ def get_top_news():
     prompt_builder = PromptBuilder(template=prompt_template)
     llm = OpenAIGenerator()
     output_validator = OutputValidator(pydantic_model=Posts)
+    post_storer = PostStorer()
 
     pipeline = Pipeline()
 
@@ -84,24 +103,25 @@ def get_top_news():
     pipeline.add_component("prompt_builder", prompt_builder)
     pipeline.add_component("llm", llm)
     pipeline.add_component("output_validator", output_validator)
+    pipeline.add_component("post_storer", post_storer)
 
     pipeline.connect("fetcher.articles", "prompt_builder.articles")
+    pipeline.connect("fetcher.ids", "prompt_builder.ids")
     pipeline.connect("prompt_builder", "llm")
     pipeline.connect("llm", "output_validator")
+    pipeline.connect("output_validator.valid_replies", "post_storer.valid_replies")
 
     pipeline.connect("output_validator.invalid_replies", "prompt_builder.invalid_replies")
     pipeline.connect("output_validator.error_message", "prompt_builder.error_message")
 
 
-    # pipeline.draw("./pipeline.png")
+    pipeline.draw("./pipeline.png")
 
-    result = pipeline.run({"fetcher": {"num_articles": 5}, "prompt_builder": {"schema": Posts.schema_json()}})
+    result = pipeline.run({"fetcher": {"num_articles": 3}, "prompt_builder": {"schema": Posts.schema_json()}})
+    print(result)
 
-    return json.loads(result["output_validator"]["valid_replies"][0])
+    return result["post_storer"]["posts"]
 
 if __name__ == "__main__":
     get_top_news()
-    # print(Posts.schema_json())
-    # print(json.dumps(top_news, indent=2))
-
 

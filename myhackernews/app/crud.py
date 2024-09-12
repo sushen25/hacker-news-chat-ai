@@ -13,6 +13,9 @@ def get_all_posts():
 def get_post_by_id(id):
     return Post.query.get(id)
 
+def does_post_exist(id) -> bool:
+    return Post.query.get(id) is not None
+
 def delete_post(id):
     user = Post.query.get(id)
     if user:

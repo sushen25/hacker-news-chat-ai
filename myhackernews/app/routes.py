@@ -1,5 +1,5 @@
 from flask import Blueprint, make_response, jsonify
-from myHackerNews import get_top_news
+from app.myHackerNews import get_top_news
 from app.crud import get_all_posts, create_post
 
 main = Blueprint('main', __name__)
