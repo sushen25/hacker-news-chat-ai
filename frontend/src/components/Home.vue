@@ -9,7 +9,7 @@
         </div>
         <div v-if="!loading && articles.length > 0" class="row justify-content-center">
             <div v-for="article in articles" :key="article.id" class="col-12 col-md-8 mb-4">
-            <div class="card shadow-sm p-3 bg-white rounded">
+            <div class="card shadow-sm p-3 bg-white rounded py-4">
                 <div class="card-body text-center">
                 <h5 class="card-title">{{ article.title }}</h5>
                 <p class="card-text">{{ article.summary }}</p>

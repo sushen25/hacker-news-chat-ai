@@ -8,7 +8,7 @@ def create_post(id, title, summary, url):
     return new_post
 
 def get_all_posts():
-    return Post.query.all()
+    return Post.query.order_by(Post.created_at.desc()).all()
 
 def get_post_by_id(id):
     return Post.query.get(id)
