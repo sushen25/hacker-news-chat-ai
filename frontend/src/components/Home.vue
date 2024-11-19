@@ -13,6 +13,7 @@
                 <div class="card-body text-center">
                 <h5 class="card-title">{{ article.title }}</h5>
                 <p class="card-text">{{ article.summary }}</p>
+                <button @click="navigateToArticle(article.id)" class="btn btn-primary mx-2">View Article</button>
                 <a :href="article.url" class="btn btn-outline-primary" target="_blank">Read More</a>
                 </div>
             </div>
@@ -23,7 +24,7 @@
   
   <script>
   import { onMounted, ref, getCurrentInstance } from 'vue';
-  
+
   export default {
     setup() {
       const articles = ref([]);
