@@ -13,8 +13,8 @@
                 <div class="card-body text-center">
                 <h5 class="card-title">{{ article.title }}</h5>
                 <p class="card-text">{{ article.summary }}</p>
-                <button @click="navigateToArticle(article.id)" class="btn btn-primary mx-2">View Article</button>
-                <a :href="article.url" class="btn btn-outline-primary" target="_blank">Read More</a>
+                <button @click="navigateToArticle(article.id)" class="btn btn-primary mx-2">Chat</button>
+                <a :href="article.url" class="btn btn-outline-primary" target="_blank">View Article</a>
                 </div>
             </div>
             </div>
@@ -23,6 +23,7 @@
   </template>
   
   <script>
+  import { useRouter } from 'vue-router';
   import { onMounted, ref, getCurrentInstance } from 'vue';
 
   export default {
@@ -32,6 +33,7 @@
       const error = ref(null);
 
       const { proxy } = getCurrentInstance();
+      const router = useRouter();
 
       const fetchArticles = async () => {
         loading.value = true;
@@ -48,6 +50,12 @@
         });
       };
 
+      const navigateToArticle = (id) => {
+        console.log("Navigating to article with id:", id);
+        console.log(router)
+        router.push({ name: "Article", params: { id } });
+      };
+
       onMounted(() => {
         fetchArticles();
       });
@@ -55,7 +63,8 @@
       return {
         articles,
         loading,
-        error
+        error,
+        navigateToArticle
       };
     },
   };

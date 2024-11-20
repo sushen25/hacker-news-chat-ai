@@ -1,6 +1,6 @@
 from flask import Blueprint, make_response, jsonify
 from app.myHackerNews import get_top_news
-from app.crud import get_all_posts, create_post
+from app.crud import get_all_posts, create_post, get_post_by_id
 
 main = Blueprint('main', __name__)
 
@@ -17,6 +17,13 @@ def get_news():
 def get_posts():
     posts = get_all_posts()
     return jsonify([{"id": post.id, "title": post.title, "summary": post.summary, "url": post.url} for post in posts])
+
+@main.route("/get_post/<int:post_id>")
+def get_post(post_id):
+    post = get_post_by_id(post_id)
+    if post is None:
+        return make_response(jsonify(error='Post not found!'), 404)
+    return jsonify({"id": post.id, "title": post.title, "summary": post.summary, "url": post.url})
 
 @main.route("/create_post")
 def create_post_temp():
