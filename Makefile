@@ -36,3 +36,4 @@ dev-attach:
 .PHONY: dev-down
 dev-down:
 	tmux kill-session -t myhackernews
+	cd myhackernews && cd db && docker-compose down
