@@ -3,7 +3,7 @@
 RAG application to allow users to chat with Hacker News Articles
 
 ## Example
-
+![Example.gif](./hacker-news-chat-example.gif)
 
 ## How it works
 Uses OpenAI LLMs and the Haystack framework to orchestrate the workflow of the LLM.
