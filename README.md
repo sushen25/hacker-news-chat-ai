@@ -14,4 +14,5 @@ The flow works roughly as follows:
 3. Take in the user prompt and generate a response
 
 Visually represented, the pipeline looks like this:
+
 ![HackerNewsChatWorkflow.png](myhackernews/app/hackerNewsChat.png)
